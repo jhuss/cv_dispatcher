@@ -1,0 +1,27 @@
+{
+  "name": "cv_dispatcher",
+  "version": "0.0.1",
+  "description": "CV Dispatcher",
+  "author": "Jesus Jerez <dev@jerez.link>",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.json"
+  },
+  "devDependencies": {
+    "@fortawesome/fontawesome-free": "^6.1.1",
+    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.30",
+    "@tsconfig/svelte": "^3.0.0",
+    "bulma": "^0.9.4",
+    "sass": "^1.51.0",
+    "svelte": "^3.46.4",
+    "svelte-check": "^2.2.7",
+    "svelte-preprocess": "^4.9.8",
+    "tslib": "^2.3.1",
+    "typescript": "^4.5.4",
+    "vite": "^2.9.7"
+  }
+}
