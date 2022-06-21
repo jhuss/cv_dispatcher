@@ -1,6 +1,8 @@
 import sys
 from sanic import Sanic, HTTPResponse
-from sanic.response import redirect, text
+from sanic.response import redirect, json
+from .db import init_db, get_db
+from .petition_utils import schema_validation, create_petition
 
 # options
 DEBUG = any(x in ['-d', '--dev', '--debug'] for x in sys.argv)
@@ -16,6 +18,23 @@ if DEBUG:
     ])
 else:
     app.config.CORS_ORIGINS = 'http://localhost:8000'
+
+# Server Listeners
+@app.before_server_start
+async def app_before_start(app, loop):
+    init_db()
+
+@app.middleware('request')
+async def handle_request(request):
+    db = get_db()
+    db.connect()
+
+@app.middleware('response')
+async def handle_response(request, response):
+    db = get_db()
+    if not db.is_closed():
+        db.close()
+
 
 if DEBUG:
     @app.get('/')
@@ -39,5 +58,19 @@ else:
 
 @app.post('/petition')
 async def petition(request):
-    print(request.json)
-    return text("OK")
+    data = request.json
+    status = 'OK'
+    messages = []
+
+    valid_data, messages = schema_validation(data)
+    if not valid_data:
+        status = 'ERROR'
+
+    if status == 'OK':
+        # status CREATED or EXIST
+        status, messages = create_petition(data)
+
+    return json({
+        'status': status,
+        'messages': messages
+    })

@@ -1,16 +1,58 @@
 <script lang="ts">
-  let email = '';
+  let email = undefined;
+  let name = undefined;
+  let note = undefined;
+
+  let status = '';
+  let messages = [];
+  $: notificationLevel = '';
+
+  function notificationClass() {
+    switch (status) {
+      case 'ERROR':
+        return 'is-danger';
+      case 'EXIST':
+        return 'is-warning';
+      case 'CREATED':
+        return 'is-success';
+      default:
+        return 'is-info';
+    }
+  }
+
+  function cleanInput(inputValue) {
+    switch (typeof inputValue) {
+      case 'string':
+        let value = String(inputValue).trim();
+        return (value === '') ? undefined : value;
+      default:
+        return inputValue;
+    }
+  }
 
   function requestForCv(event) {
-    console.log("send cv to:", email);
+    const bodyData = {
+      address: cleanInput(email),
+      name: cleanInput(name),
+      note: cleanInput(note)
+    }
 
     fetch('http://localhost:8000/petition', {
       method: 'post',
       mode: 'cors',
-      body: JSON.stringify({
-        address: email
-      })
+      body: JSON.stringify(bodyData)
+    })
+    .then(response => response.json())
+    .then((data) => {
+      status = data.status;
+      messages = data.messages;
+      notificationLevel = notificationClass();
     });
+  }
+
+  function resendRequest() {
+    // TODO: implement
+    console.log('resend!');
   }
 </script>
 
@@ -34,19 +76,53 @@
           </div>
         </div>
 
+        {#if status !== ''}
+        <div class="field">
+          <div class="notification {notificationLevel}">
+            <ul>
+            {#each messages as message, i}
+              <li>{message}.</li>
+            {/each}
+            {#if status === 'EXIST'}
+              <li>
+                <br/><button on:click|preventDefault={resendRequest} class="button is-info">Click to resend CV</button>
+              </li>
+            {/if}
+            </ul>
+          </div>
+        </div>
+        {/if}
+
         <div class="field">
           <label class="label" for="email-field">Email</label>
           <div class="control has-icons-left">
-            <input bind:value={email} id="email-field" class="input" type="email" placeholder="e.g. me@domain.com">
+            <input bind:value={email} id="email-field" class="input" type="email">
             <span class="icon is-small is-left">
               <i class="fas fa-envelope"></i>
             </span>
           </div>
         </div>
 
+        <div class="field">
+          <label class="label" for="name-field">Name or Company</label>
+          <div class="control has-icons-left">
+            <input bind:value={name} id="name-field" class="input" type="text">
+            <span class="icon is-small is-left">
+              <i class="fas fa-building-user"></i>
+            </span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="note-field">Note (optional)</label>
+          <div class="control">
+            <textarea bind:value={note} id="note-field" class="textarea"></textarea>
+          </div>
+        </div>
+
         <div class="field is-grouped is-grouped-right">
           <div class="control">
-            <button on:click|preventDefault={requestForCv} class="button is-info">Request CV</button>
+            <button on:click|preventDefault={requestForCv} class="button is-info">Click to request CV</button>
           </div>
         </div>
       </form>
