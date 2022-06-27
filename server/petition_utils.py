@@ -1,9 +1,11 @@
-import html
 import jsonschema
 import re
 import secrets
 from peewee import DoesNotExist
 from .db import CVRequest
+from .tasks import send_download_link
+from .utils import clean_input
+from .download_utils import generate_download_url
 
 
 PETITION_SCHEMA = {
@@ -72,7 +74,12 @@ def create_petition(data):
             token=generate_token(),
         )
         petition_record.save()
-        # TODO: send email
+        send_email = send_download_link(
+            petition_record.email,
+            petition_record.name,
+            generate_download_url(petition_record.token)
+        )
+        send_email()
         return ('CREATED', ['The request was created correctly, the link to download will arrive in the email'])
 
     return ('ERROR', ['The request could not be processed'])
@@ -84,7 +91,3 @@ def generate_token():
         return generate_token()
     except DoesNotExist:
         return token
-
-def clean_input(input_string):
-    if input_string:
-        return html.escape(input_string).strip()

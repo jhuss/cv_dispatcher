@@ -1,0 +1,17 @@
+# copy this file as dev.toml then edit it
+
+# copy here the same options from example.toml
+
+# dev options only:
+
+[dev]
+[dev.front]
+
+[dev.front.server]
+name = "localhost"
+port = 3000
+
+[dev.front.server.ssl]
+enable = false
+cert = ""
+key = ""

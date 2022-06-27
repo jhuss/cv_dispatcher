@@ -1,0 +1,28 @@
+# copy this file as prod.toml then edit it
+
+[url]
+base = "cv.domain.com"  # e.g. cv.domain.com:8080
+https = false
+
+[server]
+name = "localhost"
+port = 8000
+
+[server.ssl]
+enable = false
+cert = ""
+key = ""
+
+[smtp]
+host = "smtp.domain.com"
+port = 587
+starttls = true
+user = "username"
+password = "password"
+from_name = "John Doe"
+from_address = "address@domain.com"
+subject = "John Doe's CV available"
+
+[cv_files]
+current_file = "my_cv.pdf"
+download_filename = "john_doe_cv.pdf"

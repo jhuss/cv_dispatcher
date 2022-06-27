@@ -19,7 +19,7 @@ class CVRequest(BaseModel):
     note = TextField(null=True)
     token = TextField(unique=True)
     downloaded = BooleanField(default=False)
-    created_date = DateTimeField(default=datetime.datetime.now)
+    created_date = DateTimeField(default=datetime.datetime.utcnow)
     downloaded_date = DateTimeField(null=True)
 
 

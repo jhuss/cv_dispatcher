@@ -2,3 +2,5 @@
 __pycache__/
 node_modules/
 app.db*
+tasks.db*
+tasks.log
