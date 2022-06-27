@@ -37,7 +37,7 @@
       note: cleanInput(note)
     }
 
-    fetch('http://localhost:8000/petition', {
+    fetch('__SERVER__/petition', {
       method: 'post',
       mode: 'cors',
       body: JSON.stringify(bodyData)
