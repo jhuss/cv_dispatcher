@@ -80,7 +80,7 @@ async def petition(request):
         status = 'ERROR'
 
     if status == 'OK':
-        # status CREATED or EXIST
+        # status CREATED, RESEND or EXIST
         status, messages = create_petition(data)
 
     return json({

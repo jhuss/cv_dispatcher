@@ -18,7 +18,7 @@ export default defineConfig({
     replaceCodePlugin({
       replacements: [
         {
-          from: '__SERVER__',
+          from: /__SERVER__/gm,
           to: `${(config.url.https) ? 'https' : 'http'}://${config.url.base}`,
         },
       ]

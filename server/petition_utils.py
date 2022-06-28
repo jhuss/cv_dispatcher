@@ -14,6 +14,7 @@ PETITION_SCHEMA = {
         'address': { 'type': 'string', 'format': 'email' },
         'name': { 'type': 'string' },
         'note': { 'type': 'string' },
+        'resend': { 'type': 'boolean' },
     },
     'required': ['address', 'name'],
     'additionalProperties': False
@@ -60,8 +61,17 @@ def create_petition(data):
     try:
         petition_record = CVRequest.select().where(CVRequest.email == email).order_by(CVRequest.created_date.desc()).get()
         if petition_record.downloaded:
-            create = True
+            create = True  # It was already downloaded, we create a new request
         else:
+            if data.get('resend', False):
+                send_email = send_download_link(
+                    petition_record.email,
+                    petition_record.name,
+                    generate_download_url(petition_record.token)
+                )
+                send_email()
+                return ('RESEND', ['The link to download will arrive in the email'])
+
             return ('EXIST', ['A request already exists, do you want to resend the download link?'])
     except DoesNotExist:
         create = True

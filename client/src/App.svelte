@@ -14,6 +14,7 @@
       case 'EXIST':
         return 'is-warning';
       case 'CREATED':
+      case 'RESEND':
         return 'is-success';
       default:
         return 'is-info';
@@ -30,11 +31,15 @@
     }
   }
 
-  function requestForCv(event) {
+  function requestForCv(event, resend=false) {
     const bodyData = {
       address: cleanInput(email),
       name: cleanInput(name),
       note: cleanInput(note)
+    }
+
+    if (resend) {
+      bodyData['resend'] = true;
     }
 
     fetch('__SERVER__/petition', {
@@ -50,9 +55,8 @@
     });
   }
 
-  function resendRequest() {
-    // TODO: implement
-    console.log('resend!');
+  function resendRequest(event) {
+    requestForCv(event, true);
   }
 </script>
 
