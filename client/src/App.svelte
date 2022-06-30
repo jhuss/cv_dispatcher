@@ -149,10 +149,12 @@
 
       <section class="section dev-info">
         <p class="is-6 has-text-centered">
-          built with <i class="fa-solid fa-heart"></i>&#43;<i class="fa-solid fa-mug-saucer"></i>
-          on <a class="is-link" href="https://sanic.dev" target="_blank">Sanic</a> and <a class="is-link" href="https://svelte.dev" target="_blank">Svelte</a>
+          Built with <i class="fa-solid fa-heart"></i>&#43;<i class="fa-solid fa-mug-saucer"></i>
+          on <a class="is-link" href="https://sanic.dev" target="_blank">Sanic</a>
+          and <a class="is-link" href="https://svelte.dev" target="_blank">Svelte</a>.
+          App icon by <a class="is-link" href="https://icons8.com/icon/32541/resume" target="_blank">icons8</a>.
         </p>
-        <p class="is-6 has-text-centered">by <a class="is-link" href="https://github.com/jhuss" target="_blank">Jesus Jerez</a></p>
+        <p class="is-6 has-text-centered">&copy; <a class="is-link" href="https://github.com/jhuss" target="_blank">Jesus Jerez</a></p>
       </section>
     </div>
   </div>
