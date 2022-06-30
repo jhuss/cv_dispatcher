@@ -146,9 +146,21 @@
           </div>
         </div>
       </form>
+
+      <section class="section dev-info">
+        <p class="is-6 has-text-centered">
+          built with <i class="fa-solid fa-heart"></i>&#43;<i class="fa-solid fa-mug-saucer"></i>
+          on <a class="is-link" href="https://sanic.dev" target="_blank">Sanic</a> and <a class="is-link" href="https://svelte.dev" target="_blank">Svelte</a>
+        </p>
+        <p class="is-6 has-text-centered">by <a class="is-link" href="https://github.com/jhuss" target="_blank">Jesus Jerez</a></p>
+      </section>
     </div>
   </div>
 </div>
 
 <style lang="scss">
+  .dev-info {
+    font-size: 0.85em;
+    opacity: 0.7;
+  }
 </style>

@@ -12,6 +12,7 @@ https = false
 [server]
 name = "localhost"
 port = 8000
+secret = ""  # choose any random string
 
 [server.ssl]
 enable = false

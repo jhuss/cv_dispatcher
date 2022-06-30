@@ -17,6 +17,10 @@ captcha = CaptchaManager()
 CONFIG = AppConfig()
 app.config.OAS = False
 app.config.CORS_ORIGINS = generate_url(CONFIG['url']['https'], CONFIG['url']['base'])
+app.config.FORWARDED_SECRET = CONFIG['server']['secret']
+
+if app.config.FORWARDED_SECRET in [None, '']:
+    raise Exception('You must assign a secret key in the server configuration')
 
 if AppMode().is_development():
     backend_server = CONFIG['server']
@@ -41,11 +45,11 @@ async def app_after_stop(app, loop):
 @app.middleware('request')
 async def handle_request(request):
     db = get_db()
-    db.connect()
+    request.ctx.db = db
 
 @app.middleware('response')
 async def handle_response(request, response):
-    db = get_db()
+    db = request.ctx.db
     if not db.is_closed():
         db.close()
 
@@ -64,7 +68,6 @@ if AppMode().is_development():
 else:
     # TODO: check client/dist dir exist
     app.static('/', 'client/dist')
-    app.static('/public', 'client/public')
 
     @app.get('/')
     def home(request):
