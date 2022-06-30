@@ -14,9 +14,10 @@ PETITION_SCHEMA = {
         'address': { 'type': 'string', 'format': 'email' },
         'name': { 'type': 'string' },
         'note': { 'type': 'string' },
-        'resend': { 'type': 'boolean' },
+        'captcha': { 'type': 'string' },
+        'forward': { 'type': 'boolean' },
     },
-    'required': ['address', 'name'],
+    'required': ['address', 'name', 'captcha'],
     'additionalProperties': False
 }
 
@@ -63,16 +64,16 @@ def create_petition(data):
         if petition_record.downloaded:
             create = True  # It was already downloaded, we create a new request
         else:
-            if data.get('resend', False):
+            if data.get('forward', False):
                 send_email = send_download_link(
                     petition_record.email,
                     petition_record.name,
                     generate_download_url(petition_record.token)
                 )
                 send_email()
-                return ('RESEND', ['The link to download will arrive in the email'])
+                return ('FORWARDED', ['The link to download will arrive in the email'])
 
-            return ('EXIST', ['A request already exists, do you want to resend the download link?'])
+            return ('EXIST', ['A request already exists, do you want to forward the download link?'])
     except DoesNotExist:
         create = True
 

@@ -1,4 +1,5 @@
 import sys
+from base64 import b64encode
 from sanic import Sanic, HTTPResponse
 from sanic.response import redirect, json, file
 from subprocess import Popen, PIPE
@@ -6,9 +7,11 @@ from .db import init_db, get_db
 from .utils import AppMode, AppConfig, generate_url
 from .petition_utils import schema_validation, create_petition
 from .download_utils import validate_token
+from .captcha_utils import CaptchaManager, CAPTCHA_EXPIRATION_5MIN
 
 
 app = Sanic('CV_DISPATCHER')
+captcha = CaptchaManager()
 
 # config
 CONFIG = AppConfig()
@@ -80,13 +83,47 @@ async def petition(request):
         status = 'ERROR'
 
     if status == 'OK':
-        # status CREATED, RESEND or EXIST
-        status, messages = create_petition(data)
+        captcha_id = request.cookies.get('captcha_id')
+        valid_captcha, expired_captcha = captcha.validate(captcha_id, data['captcha'])
+
+        if not valid_captcha:
+            status = 'ERROR'
+            messages = ['Captcha is not valid']
+        if expired_captcha:
+            status = 'CAPTCHA-EXPIRED'
+            messages = ['Captcha has expired']
+            captcha.forget(captcha_id)
+
+        if status == 'OK':
+            # status CREATED, FORWARDED or EXIST
+            status, messages = create_petition(data)
+
+            if status in ['CREATED', 'FORWARDED']:
+                captcha.forget(captcha_id)
 
     return json({
         'status': status,
         'messages': messages
     })
+
+@app.get('/captcha')
+async def dispatch_captcha(request):
+    value, image = captcha.generate()
+    cookie_value = request.cookies.get('captcha_id')
+
+    if cookie_value is not None:
+        captcha.forget(cookie_value)
+
+    captcha_id = captcha.register(value)
+    response = json({
+        'image': b64encode(image.getvalue()).decode()
+    })
+    response.cookies['captcha_id'] = captcha_id
+    response.cookies['captcha_id']['max-age'] = CAPTCHA_EXPIRATION_5MIN * 60  # in seconds
+    response.cookies['captcha_id']['samesite'] = 'None'
+    response.cookies['captcha_id']['secure'] = True
+
+    return response
 
 @app.get('/download/<token:str>')
 async def download(request, token):

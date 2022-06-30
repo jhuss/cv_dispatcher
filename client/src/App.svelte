@@ -1,7 +1,11 @@
 <script lang="ts">
+  import Captcha from './Captcha.svelte';
+
   let email = undefined;
   let name = undefined;
   let note = undefined;
+  let captcha = undefined;
+  let refreshCaptcha = undefined;
 
   let status = '';
   let messages = [];
@@ -10,11 +14,12 @@
   function notificationClass() {
     switch (status) {
       case 'ERROR':
+      case 'CAPTCHA-EXPIRED':
         return 'is-danger';
       case 'EXIST':
         return 'is-warning';
       case 'CREATED':
-      case 'RESEND':
+      case 'FORWARDED':
         return 'is-success';
       default:
         return 'is-info';
@@ -31,15 +36,16 @@
     }
   }
 
-  function requestForCv(event, resend=false) {
+  function requestForCv(event, forward=false) {
     const bodyData = {
       address: cleanInput(email),
       name: cleanInput(name),
-      note: cleanInput(note)
+      note: cleanInput(note),
+      captcha: cleanInput(captcha)
     }
 
-    if (resend) {
-      bodyData['resend'] = true;
+    if (forward) {
+      bodyData['forward'] = true;
     }
 
     fetch('__SERVER__/petition', {
@@ -52,10 +58,14 @@
       status = data.status;
       messages = data.messages;
       notificationLevel = notificationClass();
+
+      if (['CAPTCHA-EXPIRED', 'CREATED', 'FORWARDED'].includes(status)) {
+        refreshCaptcha();
+      }
     });
   }
 
-  function resendRequest(event) {
+  function forwardRequest(event) {
     requestForCv(event, true);
   }
 </script>
@@ -89,7 +99,7 @@
             {/each}
             {#if status === 'EXIST'}
               <li>
-                <br/><button on:click|preventDefault={resendRequest} class="button is-info">Click to resend CV</button>
+                <br/><button on:click|preventDefault={forwardRequest} class="button is-info">Click to forward CV</button>
               </li>
             {/if}
             </ul>
@@ -121,6 +131,13 @@
           <label class="label" for="note-field">Note (optional)</label>
           <div class="control">
             <textarea bind:value={note} id="note-field" class="textarea"></textarea>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="captcha-field">Captcha</label>
+          <div class="control">
+            <Captcha bind:captcha={captcha} bind:refreshCaptcha={refreshCaptcha}/>
           </div>
         </div>
 
