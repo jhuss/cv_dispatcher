@@ -27,12 +27,27 @@ def send_download_link(recipient, name, url):
 
 def smtp_delivery(recipient, name, url):
     smtp_config = CONFIG['smtp']
+    text_body = '''Hello {name}!
+
+    Thank you for your interest, here is the link to download my CV in PDF format:
+
+    {link}
+
+    Please note: once downloaded, the link remains available for 24 hours, otherwise you will have to request it again.
+
+    Regards,
+    Sincerely {me}
+'''.format(
+    name=name,
+    link=url,
+    me=smtp_config['from_name']
+)
 
     message = MIMEMultipart()
     message['From'] = '{} <{}>'.format(smtp_config['from_name'], smtp_config['from_address'])
     message['To'] = '{} <{}>'.format(name, recipient)
     message['Subject'] = smtp_config['subject']
-    message.attach(MIMEText(url, 'plain'))
+    message.attach(MIMEText(text_body, 'plain'))
 
     try:
         server = smtplib.SMTP(smtp_config['host'], int(smtp_config['port']))
