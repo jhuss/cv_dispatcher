@@ -1,5 +1,10 @@
 # copy this file as prod.toml then edit it
 
+[page]
+title = "John Doe"
+header = "John Doe CV"
+description = "Hello! from here you can download my cv"
+
 [url]
 base = "cv.domain.com"  # e.g. cv.domain.com:8080
 https = false

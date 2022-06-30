@@ -18,6 +18,18 @@ export default defineConfig({
     replaceCodePlugin({
       replacements: [
         {
+          from: /__TITLE__/gm,
+          to: config.page.title,
+        },
+        {
+          from: /__HEADER__/gm,
+          to: config.page.header,
+        },
+        {
+          from: /__DESCRIPTION__/gm,
+          to: config.page.description,
+        },
+        {
           from: /__SERVER__/gm,
           to: `${(config.url.https) ? 'https' : 'http'}://${config.url.base}`,
         },

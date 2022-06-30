@@ -78,15 +78,14 @@
   <div class="columns is-centered">
     <div class="column is-half">
       <section class="section">
-        <div class="content">
-          <p class="title is-3 has-text-centered">Jesus Jerez CV Download</p>
-        </div>
+        <h3 class="title has-text-centered">__HEADER__</h3>
+        <h5 class="subtitle has-text-centered">__DESCRIPTION__</h5>
       </section>
 
       <form class="box">
         <div class="field mb-4">
           <div class="control">
-            <p class="subtitle is-5 has-text-centered">Please, provide the email address to receive the CV download</p>
+            <p class="subtitle is-5 has-text-centered">Please complete the form to receive the CV download by email.</p>
           </div>
         </div>
 
