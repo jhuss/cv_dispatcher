@@ -1,7 +1,7 @@
 import sys
 from base64 import b64encode
 from sanic import Sanic, HTTPResponse
-from sanic.response import redirect, json, file
+from sanic.response import redirect, html, json, file
 from subprocess import Popen, PIPE
 from .db import init_db, get_db
 from .utils import AppMode, AppConfig, generate_url
@@ -71,9 +71,9 @@ else:
 
     @app.get('/')
     def home(request):
-        # TODO: check index.html exist
-        response: HTTPResponse = redirect('/index.html')
-        return response
+        with open('client/dist/index.html', encoding='utf8') as f:
+            contents = f.read()
+            return html(contents)
 
 @app.post('/petition')
 async def petition(request):
